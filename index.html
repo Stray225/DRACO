@@ -28,14 +28,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);backgroun
 .login-btn:hover,.login-btn.logged{background:var(--red);color:#fff;}
 
 /* HERO */
-#inicio{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:var(--nav) 0 60px;}
+#inicio{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:var(--nav) 0 80px;}
 .hero-bg{position:absolute;inset:0;overflow:hidden;}
-.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.28) saturate(.55);transform:scale(1.04);}
-.hero-overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 15%,rgba(10,10,10,.65) 100%),linear-gradient(to top,rgba(10,10,10,1) 0%,rgba(10,10,10,.05) 55%,transparent 100%),linear-gradient(to bottom,rgba(10,10,10,.5) 0%,transparent 20%);}
-.hero-scanline{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);pointer-events:none;z-index:1;}
-.hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;padding:0 16px;}
-.hero-logo{width:100%;max-width:min(94vw,820px);height:auto;object-fit:contain;mix-blend-mode:screen;filter:drop-shadow(0 0 50px rgba(224,32,32,.7)) drop-shadow(0 0 120px rgba(224,32,32,.3)) contrast(1.1) brightness(1.05);margin-bottom:4px;}
-.hero-tagline{font-family:"Bebas Neue",sans-serif;font-size:clamp(.9rem,2.5vw,1.4rem);letter-spacing:.55em;color:var(--lg);margin-bottom:28px;text-transform:uppercase;}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.22) saturate(.6);transform:scale(1.06);}
+/* overlay: dark edges, fade to black at bottom, lighter in center */
+.hero-overlay{position:absolute;inset:0;background:
+  radial-gradient(ellipse 80% 60% at 50% 40%,transparent 0%,rgba(10,10,10,.55) 100%),
+  linear-gradient(to top,rgba(10,10,10,1) 0%,rgba(10,10,10,.2) 40%,transparent 100%),
+  linear-gradient(to bottom,rgba(10,10,10,.7) 0%,transparent 25%);}
+/* red glow behind logo area — separate element so it doesn't break blend */
+.hero-glow{position:absolute;width:90%;max-width:800px;height:45%;top:15%;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(200,20,20,.38) 0%,transparent 65%);pointer-events:none;}
+/* scanlines: very subtle film grain feel */
+.hero-scanline{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);pointer-events:none;}
+/* hero-content: NO z-index so mix-blend-mode works against the video */
+.hero-content{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;padding:0 20px;}
+/* logo: mix-blend-mode:screen removes the black bg — NO filter (filter breaks blending) */
+.hero-logo{width:100%;max-width:min(92vw,860px);height:auto;object-fit:contain;mix-blend-mode:screen;display:block;margin-bottom:0;}
+.hero-rule{width:min(60vw,320px);height:1px;background:linear-gradient(to right,transparent,var(--red),transparent);margin:6px auto 14px;}
+.hero-tagline{font-family:"Bebas Neue",sans-serif;font-size:clamp(1rem,3vw,1.5rem);letter-spacing:.6em;color:rgba(240,237,232,.55);margin-bottom:10px;text-transform:uppercase;}
+.hero-loc{font-size:.58rem;font-weight:300;letter-spacing:.3em;color:var(--g);text-transform:uppercase;margin-bottom:36px;}
 .hero-pill{font-size:.52rem;font-weight:500;letter-spacing:.44em;text-transform:uppercase;color:var(--red);margin-bottom:24px;display:flex;align-items:center;gap:10px;}
 .hero-pill::before,.hero-pill::after{content:"";flex:0 0 28px;height:1px;background:var(--red);}
 .hero-sub{font-size:.72rem;font-weight:300;letter-spacing:.1em;color:var(--lg);margin-bottom:32px;line-height:1.7;}
@@ -195,12 +206,13 @@ footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
     <video class="hero-video" autoplay muted loop playsinline preload="auto" src="jordan%20video%20rotativo.mp4"></video>
   </div>
   <div class="hero-overlay"></div>
+  <div class="hero-glow"></div>
   <div class="hero-scanline"></div>
   <div class="hero-content">
-    <div class="hero-pill">Nueva colección</div>
     <img class="hero-logo" src="logo.png" alt="DRACO" loading="eager">
+    <div class="hero-rule"></div>
     <div class="hero-tagline">Zapatillas &amp; Ropa</div>
-    <div class="hero-sub">Sneakers exclusivos &middot; <b>Caja original</b> &middot; Buenos Aires</div>
+    <div class="hero-loc">Buenos Aires &nbsp;·&nbsp; Envíos a todo el país</div>
     <div class="hero-btns">
       <a class="btn-primary" href="#zapatillas">Ver catálogo</a>
       <a class="btn-secondary" href="https://wa.me/5491121671135?text=Hola%20DRACO!%20Quiero%20consultar" target="_blank" rel="noopener">
