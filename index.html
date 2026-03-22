@@ -10,12 +10,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-:root{--bg:#0a0a0a;--s1:#111;--s2:#161616;--bd:#222;--red:#e02020;--red2:#b31a1a;--w:#f0ede8;--g:#444;--lg:#888;--nav:58px;}
+:root{
+  --bg:#0a0a0a;--s1:#111;--s2:#161616;--bd:#222;
+  --red:#e02020;--red2:#b31a1a;--w:#f0ede8;--g:#444;--lg:#888;
+  --nav:58px;
+  --red-glow:0 0 20px rgba(224,32,32,.35);
+}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
 body{background:var(--bg);color:var(--w);font-family:"DM Sans",sans-serif;overflow-x:hidden;}
 img{display:block;max-width:100%;}
 button,input,select,textarea{font-family:inherit;border-radius:0;-webkit-appearance:none;appearance:none;}
 a{text-decoration:none;color:inherit;}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease;}
+#splash.hide{opacity:0;pointer-events:none;}
+#splash img{height:64px;width:auto;object-fit:contain;opacity:0;transition:opacity .5s ease;}
+#splash img.show{opacity:1;}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);background:rgba(10,10,10,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:16px;}
@@ -31,26 +42,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);backgroun
 #inicio{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:var(--nav) 0 80px;}
 .hero-bg{position:absolute;inset:0;overflow:hidden;}
 .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.22) saturate(.6);transform:scale(1.06);}
-/* overlay: dark edges, fade to black at bottom, lighter in center */
 .hero-overlay{position:absolute;inset:0;background:
   radial-gradient(ellipse 80% 60% at 50% 40%,transparent 0%,rgba(10,10,10,.55) 100%),
   linear-gradient(to top,rgba(10,10,10,1) 0%,rgba(10,10,10,.2) 40%,transparent 100%),
   linear-gradient(to bottom,rgba(10,10,10,.7) 0%,transparent 25%);}
-/* red glow behind logo area — separate element so it doesn't break blend */
 .hero-glow{position:absolute;width:90%;max-width:800px;height:45%;top:15%;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(200,20,20,.38) 0%,transparent 65%);pointer-events:none;}
-/* scanlines: very subtle film grain feel */
 .hero-scanline{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);pointer-events:none;}
-/* hero-content: NO z-index so mix-blend-mode works against the video */
+/* hero-content: NO z-index — required for mix-blend-mode:screen on logo */
 .hero-content{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;padding:0 20px;}
-/* logo: mix-blend-mode:screen removes the black bg — NO filter (filter breaks blending) */
+/* NO filter on hero-logo — breaks mix-blend-mode:screen */
 .hero-logo{width:100%;max-width:min(92vw,860px);height:auto;object-fit:contain;mix-blend-mode:screen;display:block;margin-bottom:0;}
 .hero-rule{width:min(60vw,320px);height:1px;background:linear-gradient(to right,transparent,var(--red),transparent);margin:6px auto 14px;}
 .hero-tagline{font-family:"Bebas Neue",sans-serif;font-size:clamp(1rem,3vw,1.5rem);letter-spacing:.6em;color:rgba(240,237,232,.55);margin-bottom:10px;text-transform:uppercase;}
 .hero-loc{font-size:.58rem;font-weight:300;letter-spacing:.3em;color:var(--g);text-transform:uppercase;margin-bottom:36px;}
-.hero-pill{font-size:.52rem;font-weight:500;letter-spacing:.44em;text-transform:uppercase;color:var(--red);margin-bottom:24px;display:flex;align-items:center;gap:10px;}
-.hero-pill::before,.hero-pill::after{content:"";flex:0 0 28px;height:1px;background:var(--red);}
-.hero-sub{font-size:.72rem;font-weight:300;letter-spacing:.1em;color:var(--lg);margin-bottom:32px;line-height:1.7;}
-.hero-sub b{color:var(--w);font-weight:500;}
 .hero-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;}
 .btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.64rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:14px 24px;background:var(--w);color:var(--bg);cursor:pointer;border:none;transition:all .2s;text-decoration:none;}
 .btn-primary:hover{background:var(--red);color:#fff;}
@@ -58,25 +62,50 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);backgroun
 .btn-secondary:hover{border-color:var(--w);color:var(--w);}
 .btn-secondary svg{width:16px;height:16px;fill:currentColor;flex-shrink:0;}
 
+/* BRAND NARRATIVE */
+#narrative{padding:100px 20px;display:flex;align-items:center;justify-content:center;background:var(--bg);}
+.narrative-inner{max-width:520px;width:100%;}
+.narrative-logo{font-family:"Bebas Neue",sans-serif;font-size:clamp(3rem,12vw,6rem);letter-spacing:.08em;color:var(--w);line-height:1;margin-bottom:16px;}
+.narrative-rule{width:40px;height:2px;background:var(--red);margin-bottom:24px;}
+.narrative-line{font-family:"Bebas Neue",sans-serif;font-size:clamp(1.2rem,4vw,2rem);letter-spacing:.12em;color:var(--lg);line-height:1.5;text-transform:uppercase;}
+.narrative-line span{color:var(--w);}
+
+/* LATEST DROPS */
+#drops{padding:70px 12px 50px;}
+.drops-hd{padding:0 4px 20px;border-bottom:1px solid var(--bd);margin-bottom:8px;}
+.drops-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(1.6rem,6vw,2.4rem);letter-spacing:.1em;margin-bottom:2px;}
+.drops-sub{font-size:.52rem;color:var(--g);letter-spacing:.18em;text-transform:uppercase;}
+.drops-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-top:16px;}
+@media(min-width:600px){.drops-grid{grid-template-columns:repeat(4,1fr);}}
+
 /* CATALOG */
 .cat-section{padding:70px 12px 50px;}
-.cat-section-hd{display:flex;align-items:baseline;justify-content:space-between;padding:0 4px 16px;border-bottom:1px solid var(--bd);margin-bottom:16px;}
+.cat-section-hd{display:flex;align-items:baseline;justify-content:space-between;padding:0 4px 16px;border-bottom:1px solid var(--bd);margin-bottom:8px;}
 .cat-section-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(1.6rem,6vw,2.4rem);letter-spacing:.1em;}
 .cat-section-count{font-size:.52rem;color:var(--g);letter-spacing:.14em;text-transform:uppercase;}
 .cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;}
 @media(min-width:600px){.cat-grid{grid-template-columns:repeat(3,1fr);}}
 @media(min-width:900px){.cat-grid{grid-template-columns:repeat(4,1fr);}}
 
+/* FILTER BAR */
+.filter-bar{padding:16px 12px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.filter-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.filter-label{font-size:.48rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--g);margin-right:2px;padding-right:6px;border-right:1px solid var(--bd);}
+.filter-pill{font-size:.5rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border:1px solid var(--bd);color:var(--lg);background:none;cursor:pointer;transition:all .2s;}
+.filter-pill:hover{border-color:var(--g);color:var(--w);}
+.filter-pill.active{border-color:var(--red);color:var(--red);background:rgba(224,32,32,.07);}
+.filter-sep{width:1px;height:20px;background:var(--bd);margin:0 4px;}
+
 /* PRODUCT CARD */
-.pcard{position:relative;overflow:hidden;background:var(--s1);cursor:pointer;aspect-ratio:4/5;border:1px solid transparent;transition:border-color .15s;}
-.pcard:hover{border-color:rgba(224,32,32,.4);}
-.pcard-img{width:100%;height:100%;object-fit:cover;filter:saturate(.8) brightness(.88);transition:transform .5s,filter .3s;}
+.pcard{position:relative;overflow:hidden;background:var(--s1);cursor:pointer;aspect-ratio:4/5;border:1px solid transparent;transition:border-color .3s,box-shadow .3s;}
+.pcard:hover{border-color:rgba(224,32,32,.4);box-shadow:var(--red-glow);}
+.pcard-img{width:100%;height:100%;object-fit:cover;filter:saturate(.8) brightness(.88);transition:transform .5s ease,filter .3s ease;}
 .pcard:hover .pcard-img{transform:scale(1.05);filter:saturate(1) brightness(.96);}
 .pcard-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.95) 0%,transparent 55%);pointer-events:none;}
 .pcard-info{position:absolute;bottom:0;left:0;right:0;padding:10px 11px 12px;}
 .pcard-name{font-size:.62rem;font-weight:500;letter-spacing:.03em;text-transform:uppercase;color:var(--w);line-height:1.3;margin-bottom:2px;}
-.pcard-price{font-family:"Bebas Neue",sans-serif;font-size:1rem;letter-spacing:.05em;color:var(--red);}
-.badge{position:absolute;top:9px;left:9px;background:var(--red);color:#fff;font-size:.44rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:3px 7px;}
+.pcard-price{font-family:"Bebas Neue",sans-serif;font-size:1.1rem;letter-spacing:.05em;color:var(--red);}
+.badge{position:absolute;top:9px;left:9px;background:var(--red);color:#fff;font-size:.42rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 7px;}
 .pcard-del{position:absolute;top:9px;right:9px;z-index:5;background:rgba(10,10,10,.9);border:1px solid rgba(224,32,32,.5);color:var(--red);font-size:.48rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 8px;cursor:pointer;display:none;transition:all .2s;}
 .pcard-del:hover{background:var(--red);color:#fff;}
 body.adm .pcard-del{display:block;}
@@ -94,19 +123,42 @@ body.adm .pcard-del{display:block;}
 .sh-close:hover{color:var(--w);}
 .sh-title{font-family:"Bebas Neue",sans-serif;font-size:1.5rem;letter-spacing:.07em;margin-bottom:20px;}
 .sh-title span{color:var(--red);}
+
+/* PRODUCT DETAIL */
 .pd-img-wrap{width:100%;aspect-ratio:1/1;overflow:hidden;background:#0d0d0d;}
-.pd-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.pd-img-wrap img{width:100%;height:100%;object-fit:cover;transition:opacity .2s;}
+.pd-thumbs{display:flex;gap:6px;margin-top:6px;}
+.pd-thumb{width:56px;height:56px;object-fit:cover;cursor:pointer;border:2px solid transparent;transition:border-color .2s;opacity:.6;flex-shrink:0;}
+.pd-thumb.active{border-color:var(--red);opacity:1;}
 .pd-body{padding:16px 0 0;}
 .pd-cat{font-size:.5rem;font-weight:500;letter-spacing:.36em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
 .pd-name{font-family:"Bebas Neue",sans-serif;font-size:clamp(1.6rem,6vw,2.4rem);letter-spacing:.04em;line-height:1;margin-bottom:4px;}
-.pd-price{font-family:"Bebas Neue",sans-serif;font-size:1.5rem;color:var(--red);letter-spacing:.04em;margin-bottom:14px;}
+.pd-price{font-family:"Bebas Neue",sans-serif;font-size:1.7rem;color:var(--red);letter-spacing:.04em;margin-bottom:14px;}
 .pd-div{height:1px;background:var(--bd);margin-bottom:14px;}
 .pd-desc{font-size:.8rem;font-weight:300;color:var(--lg);line-height:1.8;margin-bottom:18px;}
-.pd-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:24px;}
+.pd-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px;}
 .pd-tag{font-size:.5rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--g);border:1px solid var(--bd);padding:3px 8px;}
-.wsp-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:.68rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;transition:background .2s;}
+
+/* SIZE SELECTOR */
+.pd-sizes-label{font-size:.5rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--lg);margin-bottom:8px;}
+.pd-sizes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
+.size-pill{font-size:.58rem;font-weight:500;letter-spacing:.06em;padding:6px 11px;border:1px solid var(--bd);color:var(--lg);background:none;cursor:pointer;transition:all .2s;min-width:38px;text-align:center;}
+.size-pill:hover{border-color:var(--g);color:var(--w);}
+.size-pill.active{border-color:var(--red);color:#fff;background:var(--red);}
+
+/* QTY SELECTOR */
+.pd-qty-row{display:flex;align-items:center;gap:0;margin-bottom:20px;}
+.pd-qty-label{font-size:.5rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--lg);margin-right:12px;}
+.qty-btn{width:34px;height:34px;border:1px solid var(--bd);background:none;color:var(--w);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.qty-btn:hover{border-color:var(--red);color:var(--red);}
+.qty-val{width:40px;height:34px;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);background:var(--s2);color:var(--w);font-size:.82rem;font-weight:500;text-align:center;display:flex;align-items:center;justify-content:center;}
+
+/* BUTTONS */
+.wsp-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:.68rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;transition:background .2s;margin-bottom:8px;}
 .wsp-btn:hover{background:var(--red2);}
 .wsp-btn svg{width:18px;height:18px;fill:#fff;flex-shrink:0;}
+.cart-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:none;color:var(--lg);border:1px solid var(--bd);cursor:pointer;font-size:.64rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;transition:all .2s;}
+.cart-btn:hover{border-color:var(--w);color:var(--w);}
 
 /* FORMS */
 .fg{margin-bottom:14px;}
@@ -128,6 +180,11 @@ body.adm .pcard-del{display:block;}
 .img-preview{position:relative;margin-bottom:14px;}
 .img-preview img{width:100%;max-height:180px;object-fit:cover;}
 .img-rm{position:absolute;top:8px;right:8px;background:rgba(10,10,10,.9);border:1px solid var(--bd);color:var(--w);font-size:.52rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 8px;cursor:pointer;}
+/* Size checkboxes in admin form */
+.size-checks{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.size-check-item{display:flex;align-items:center;gap:5px;}
+.size-check-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--red);cursor:pointer;}
+.size-check-item label{font-size:.55rem;color:var(--lg);letter-spacing:.08em;cursor:pointer;}
 
 /* ADMIN */
 .adm-wrap{padding:calc(var(--nav) + 20px) 16px 100px;}
@@ -175,10 +232,28 @@ body.adm .pcard-del{display:block;}
 .sec-div{height:1px;background:linear-gradient(to right,transparent,var(--bd),transparent);margin:0 20px;}
 
 /* FOOTER */
-footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
-.footer-logo{display:flex;justify-content:center;margin-bottom:16px;}
-.footer-logo img{height:34px;mix-blend-mode:screen;filter:contrast(1.1);}
-.footer-txt{font-size:.54rem;color:var(--g);letter-spacing:.12em;text-transform:uppercase;line-height:2.2;}
+footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1);}
+.footer-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:36px;text-align:center;}
+@media(min-width:680px){.footer-inner{grid-template-columns:1fr 1fr 1fr;text-align:left;}}
+.footer-col{}
+.footer-logo-wrap{display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+@media(min-width:680px){.footer-logo-wrap{justify-content:flex-start;}}
+.footer-logo-wrap img{height:36px;width:auto;mix-blend-mode:screen;}
+.footer-tagline{font-size:.5rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--g);line-height:1.8;}
+.footer-col-title{font-size:.48rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--lg);margin-bottom:12px;}
+.footer-social{display:flex;flex-direction:column;gap:10px;align-items:center;}
+@media(min-width:680px){.footer-social{align-items:flex-start;}}
+.footer-social-link{display:flex;align-items:center;gap:8px;font-size:.6rem;color:var(--g);letter-spacing:.06em;transition:color .2s;}
+.footer-social-link:hover{color:var(--w);}
+.footer-social-link svg{width:15px;height:15px;fill:currentColor;flex-shrink:0;}
+.footer-bottom{max-width:900px;margin:32px auto 0;padding-top:20px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;}
+@media(min-width:680px){.footer-bottom{flex-direction:row;justify-content:space-between;}}
+.footer-copy{font-size:.48rem;color:var(--g);letter-spacing:.1em;text-transform:uppercase;}
+.footer-shipping{font-size:.48rem;color:var(--g);letter-spacing:.1em;text-transform:uppercase;}
+
+/* REVEAL ANIMATION */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.visible{opacity:1;transform:none;}
 
 /* ANIM */
 .fadein{animation:fadein .35s ease both;}
@@ -186,6 +261,11 @@ footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
 </style>
 </head>
 <body>
+
+<!-- LOADING SPLASH -->
+<div id="splash">
+  <img id="splashLogo" src="favicon.png" alt="DRACO">
+</div>
 
 <!-- NAV -->
 <nav>
@@ -211,13 +291,13 @@ footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
   <div class="hero-content">
     <img class="hero-logo" src="logo.png" alt="DRACO" loading="eager">
     <div class="hero-rule"></div>
-    <div class="hero-tagline">Zapatillas &amp; Ropa</div>
-    <div class="hero-loc">Buenos Aires &nbsp;·&nbsp; Envíos a todo el país</div>
+    <div class="hero-tagline">ZAPATILLAS &amp; ROPA</div>
+    <div class="hero-loc">Authentic streetwear. Buenos Aires.</div>
     <div class="hero-btns">
-      <a class="btn-primary" href="#zapatillas">Ver catálogo</a>
+      <a class="btn-primary" href="#zapatillas">VER ZAPATILLAS</a>
       <a class="btn-secondary" href="https://wa.me/5491121671135?text=Hola%20DRACO!%20Quiero%20consultar" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.146 1.547 5.887L.057 23.25a.75.75 0 00.916.932l5.424-1.48A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.694-.5-5.244-1.373l-.374-.216-3.875 1.057 1.029-3.772-.237-.39A9.969 9.969 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        WhatsApp
+        WHATSAPP
       </a>
     </div>
   </div>
@@ -225,19 +305,65 @@ footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
 
 <div class="sec-div"></div>
 
+<!-- BRAND NARRATIVE -->
+<section id="narrative" class="reveal">
+  <div class="narrative-inner">
+    <div class="narrative-logo">DRACO</div>
+    <div class="narrative-rule"></div>
+    <div class="narrative-line"><span>Exclusive Sneakers.</span></div>
+    <div class="narrative-line"><span>Authentic Streetwear.</span></div>
+    <div class="narrative-line">Buenos Aires.</div>
+  </div>
+</section>
+
+<div class="sec-div"></div>
+
+<!-- LATEST DROPS -->
+<section id="drops" class="reveal">
+  <div class="drops-hd">
+    <div class="drops-title">LATEST DROPS</div>
+    <div class="drops-sub">Colección actual</div>
+  </div>
+  <div class="drops-grid" id="gridDrops"></div>
+</section>
+
+<div class="sec-div"></div>
+
 <!-- ZAPATILLAS -->
-<section id="zapatillas" class="cat-section">
+<section id="zapatillas" class="cat-section reveal">
   <div class="cat-section-hd">
     <div class="cat-section-title">ZAPATILLAS</div>
     <div class="cat-section-count" id="cntZap"></div>
   </div>
-  <div class="cat-grid" id="gridZap"></div>
+  <!-- FILTER BAR -->
+  <div class="filter-bar" id="filterBarZap">
+    <div class="filter-group">
+      <span class="filter-label">Marca</span>
+      <button class="filter-pill active" data-filter="brand" data-val="todos" onclick="setFilter('brand','todos')">Todos</button>
+      <button class="filter-pill" data-filter="brand" data-val="Nike" onclick="setFilter('brand','Nike')">Nike</button>
+      <button class="filter-pill" data-filter="brand" data-val="Adidas" onclick="setFilter('brand','Adidas')">Adidas</button>
+      <button class="filter-pill" data-filter="brand" data-val="Jordan" onclick="setFilter('brand','Jordan')">Jordan</button>
+      <button class="filter-pill" data-filter="brand" data-val="Puma" onclick="setFilter('brand','Puma')">Puma</button>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-group">
+      <span class="filter-label">Talle</span>
+      <button class="filter-pill active" data-filter="size" data-val="todos" onclick="setFilter('size','todos')">Todos</button>
+      <button class="filter-pill" data-filter="size" data-val="40" onclick="setFilter('size','40')">40</button>
+      <button class="filter-pill" data-filter="size" data-val="41" onclick="setFilter('size','41')">41</button>
+      <button class="filter-pill" data-filter="size" data-val="42" onclick="setFilter('size','42')">42</button>
+      <button class="filter-pill" data-filter="size" data-val="43" onclick="setFilter('size','43')">43</button>
+      <button class="filter-pill" data-filter="size" data-val="44" onclick="setFilter('size','44')">44</button>
+      <button class="filter-pill" data-filter="size" data-val="45" onclick="setFilter('size','45')">45</button>
+    </div>
+  </div>
+  <div class="cat-grid" id="gridZap" style="margin-top:16px;"></div>
 </section>
 
 <div class="sec-div"></div>
 
 <!-- ROPA -->
-<section id="ropa" class="cat-section">
+<section id="ropa" class="cat-section reveal">
   <div class="cat-section-hd">
     <div class="cat-section-title">ROPA</div>
     <div class="cat-section-count" id="cntRopa"></div>
@@ -246,11 +372,33 @@ footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
 </section>
 
 <!-- FOOTER -->
-<footer>
-  <div class="footer-logo"><img src="favicon.png" alt="DRACO"></div>
-  <div class="footer-txt">
-    DRACO &copy; 2025 &nbsp;&middot;&nbsp; Buenos Aires, Argentina<br>
-    Sneakers exclusivos &middot; Caja original &middot; Envíos a todo el país
+<footer class="reveal">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo-wrap"><img src="favicon.png" alt="DRACO"></div>
+      <div class="footer-tagline">EXCLUSIVE SNEAKERS · BUENOS AIRES</div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Contacto</div>
+      <div class="footer-social">
+        <a class="footer-social-link" href="https://instagram.com/draco.bsas" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          @draco.bsas
+        </a>
+        <a class="footer-social-link" href="https://wa.me/5491121671135" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.146 1.547 5.887L.057 23.25a.75.75 0 00.916.932l5.424-1.48A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.694-.5-5.244-1.373l-.374-.216-3.875 1.057 1.029-3.772-.237-.39A9.969 9.969 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          +54 9 11 2167-1135
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Envíos</div>
+      <div class="footer-tagline">Buenos Aires, Argentina<br>Envíos a todo el país</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2025 DRACO. Todos los derechos reservados.</div>
+    <div class="footer-shipping">Sneakers exclusivos · Caja original</div>
   </div>
 </footer>
 
@@ -289,6 +437,7 @@ footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
     <div class="sh-handle"></div>
     <button class="sh-close" onclick="closeModal('ovDetail')">&#10005;</button>
     <div class="pd-img-wrap"><img id="dtImg" src="" alt=""></div>
+    <div class="pd-thumbs" id="dtThumbs"></div>
     <div class="pd-body">
       <div class="pd-cat" id="dtCat"></div>
       <div class="pd-name" id="dtName"></div>
@@ -296,10 +445,19 @@ footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
       <div class="pd-div"></div>
       <div class="pd-desc" id="dtDesc"></div>
       <div class="pd-tags" id="dtTags"></div>
+      <div class="pd-sizes-label" id="dtSizesLabel" style="display:none;">Talle</div>
+      <div class="pd-sizes" id="dtSizes"></div>
+      <div class="pd-qty-row">
+        <span class="pd-qty-label">Cantidad</span>
+        <button class="qty-btn" onclick="changeQty(-1)">&#8722;</button>
+        <div class="qty-val" id="dtQty">1</div>
+        <button class="qty-btn" onclick="changeQty(1)">&#43;</button>
+      </div>
       <a class="wsp-btn" id="dtWsp" href="#" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.146 1.547 5.887L.057 23.25a.75.75 0 00.916.932l5.424-1.48A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.694-.5-5.244-1.373l-.374-.216-3.875 1.057 1.029-3.772-.237-.39A9.969 9.969 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        Consultar por WhatsApp
+        COMPRAR POR WHATSAPP
       </a>
+      <button class="cart-btn" onclick="alert('Carrito — próximamente')">AGREGAR AL CARRITO</button>
     </div>
   </div>
 </div>
@@ -325,13 +483,21 @@ footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
     <div class="sh-title" id="shProdTitle">NUEVO <span>PRODUCTO</span></div>
     <div class="frow">
       <div><label class="fl">Categoría</label>
-        <select class="fsel" id="fCat"><option value="zapatillas">Zapatillas</option><option value="ropa">Ropa</option></select>
+        <select class="fsel" id="fCat" onchange="updateSizeCheckboxes()"><option value="zapatillas">Zapatillas</option><option value="ropa">Ropa</option></select>
       </div>
       <div><label class="fl">Badge</label><input class="fi" id="fBadge" type="text" placeholder="HOT / NEW / DROP" style="text-transform:uppercase;"></div>
     </div>
     <div class="fg"><label class="fl">Nombre</label><input class="fi" id="fName" type="text" placeholder="Nike Air Max 90"></div>
-    <div class="fg"><label class="fl">Precio</label><input class="fi" id="fPrice" type="text" placeholder="$85.000"></div>
+    <div class="fg"><label class="fl">Marca</label><input class="fi" id="fBrand" type="text" placeholder="Nike / Adidas / Jordan..."></div>
+    <div class="frow">
+      <div><label class="fl">Precio</label><input class="fi" id="fPrice" type="text" placeholder="$85.000"></div>
+      <div><label class="fl">Stock</label><input class="fi" id="fStock" type="number" placeholder="10" min="0"></div>
+    </div>
     <div class="fg"><label class="fl">Descripción</label><textarea class="fi" id="fDesc" rows="3" placeholder="Descripción del producto..." style="resize:vertical;"></textarea></div>
+    <div class="fg">
+      <label class="fl">Talles disponibles</label>
+      <div class="size-checks" id="fSizeChecks"></div>
+    </div>
     <label class="fl" style="margin-bottom:8px;">Imagen</label>
     <div id="imgDropWrap">
       <div class="img-drop"><input type="file" accept="image/*" onchange="handleImg(event)"><div class="img-drop-txt">Tocá para subir imagen</div></div>
@@ -359,44 +525,58 @@ footer{border-top:1px solid var(--bd);padding:36px 20px;text-align:center;}
 <script>
 const ADMIN_USER='admin', ADMIN_PASS='admin', WSP='5491121671135';
 
+const SIZES_ZAP=['38','39','40','41','42','43','44','45'];
+const SIZES_ROPA=['XS','S','M','L','XL'];
+
 const DEFAULT={
   zapatillas:[
-    {id:1,name:"Nike Air Max 270",price:"$85.000",badge:"HOT",desc:"Zapatilla icónica con cámara de aire Max visible. Amortiguación brutal para todo el día, upper de mesh transpirable.",tags:["Nike","Air Max","Lifestyle"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=85&fit=crop"},
-    {id:2,name:"Adidas Forum Low",price:"$72.000",badge:"NEW",desc:"Clásico del basketball reimaginado. Upper de cuero premium con cierre en velcro y suela de goma vulcanizada.",tags:["Adidas","Forum","Retro"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=700&q=85&fit=crop"},
-    {id:3,name:"Jordan 1 High OG",price:"$120.000",badge:"DROP",desc:"El clásico eterno de Michael Jordan. Cuero tumbled premium, Air Unit y suela de herringbone.",tags:["Jordan","High","Basketball"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=700&q=85&fit=crop"},
-    {id:4,name:"Nike SB Dunk Low",price:"$95.000",badge:"HOT",desc:"Dunk de skateboarding con padding extra en lengüeta y tobillo. Estética retro 2000s inmortal.",tags:["Nike","Dunk","Skate"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1584735175315-9d5df23be4be?w=700&q=85&fit=crop"},
-    {id:5,name:"Vans Old Skool",price:"$55.000",badge:"",desc:"La zapatilla skate por excelencia con el icónico jazz stripe lateral. Canvas duradero y suela Waffle.",tags:["Vans","Skate","Classic"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1543508282-6319a3e2621f?w=700&q=85&fit=crop"},
-    {id:6,name:"Converse Chuck 70",price:"$58.000",badge:"",desc:"Versión premium del All Star. Suela más gruesa, mejor terminación interior y canvas de mayor densidad.",tags:["Converse","Chuck","Retro"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1494496195158-c3bc975a47b0?w=700&q=85&fit=crop"},
-    {id:7,name:"Nike Air Force 1",price:"$88.000",badge:"HOT",desc:"El modelo más vendido de Nike en la historia. All white, suela de Air y cuero premium.",tags:["Nike","AF1","Blancas"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=700&q=85&fit=crop"},
-    {id:8,name:"Puma Suede Classic",price:"$49.000",badge:"",desc:"Un ícono desde 1968. Suede genuino y suela Formstrip que no pasa de moda.",tags:["Puma","Suede","Clasico"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1556906781-4f5f44a70e58?w=700&q=85&fit=crop"},
-    {id:9,name:"Asics Gel-Lyte III",price:"$78.000",badge:"NEW",desc:"Cushioning GEL legendario en silueta lowkey perfecta para coleccionistas del running vintage.",tags:["Asics","Gel","Running"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1562183241-b937e9102f69?w=700&q=85&fit=crop"},
-    {id:10,name:"Reebok Classic Leather",price:"$52.000",badge:"",desc:"El más icónico de Reebok. Cuero suave y fit ergonómico que se adapta al pie desde el primer uso.",tags:["Reebok","Classic","Leather"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=700&q=85&fit=crop"},
-    {id:11,name:"On Cloudmonster",price:"$130.000",badge:"DROP",desc:"Máxima amortiguación con tecnología CloudTec de 38 pods. El futuro del running en silueta chunky.",tags:["On Running","Cloud","Running"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=700&q=85&fit=crop"},
-    {id:12,name:"New Balance 990v5",price:"$110.000",badge:"NEW",desc:"Made in USA. La pinnacle de New Balance con ENCAP y foam de doble densidad. Gris clásico inmortal.",tags:["New Balance","USA","Premium"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1539185540738-b6e98c72d05a?w=700&q=85&fit=crop"}
+    {id:1,name:"Nike Air Max 270",price:"$85.000",badge:"HOT",brand:"Nike",stock:8,sizes:["40","41","42","43","44"],desc:"Zapatilla icónica con cámara de aire Max visible. Amortiguación brutal para todo el día, upper de mesh transpirable.",tags:["Nike","Air Max","Lifestyle"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=85&fit=crop",images:[]},
+    {id:2,name:"Adidas Forum Low",price:"$72.000",badge:"NEW",brand:"Adidas",stock:5,sizes:["40","41","42","43"],desc:"Clásico del basketball reimaginado. Upper de cuero premium con cierre en velcro y suela de goma vulcanizada.",tags:["Adidas","Forum","Retro"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=700&q=85&fit=crop",images:[]},
+    {id:3,name:"Jordan 1 High OG",price:"$120.000",badge:"DROP",brand:"Jordan",stock:3,sizes:["41","42","43","44","45"],desc:"El clásico eterno de Michael Jordan. Cuero tumbled premium, Air Unit y suela de herringbone.",tags:["Jordan","High","Basketball"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=700&q=85&fit=crop",images:[]},
+    {id:4,name:"Nike SB Dunk Low",price:"$95.000",badge:"HOT",brand:"Nike",stock:6,sizes:["40","41","42","43","44"],desc:"Dunk de skateboarding con padding extra en lengüeta y tobillo. Estética retro 2000s inmortal.",tags:["Nike","Dunk","Skate"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1584735175315-9d5df23be4be?w=700&q=85&fit=crop",images:[]},
+    {id:5,name:"Vans Old Skool",price:"$55.000",badge:"",brand:"Vans",stock:10,sizes:["39","40","41","42","43","44"],desc:"La zapatilla skate por excelencia con el icónico jazz stripe lateral. Canvas duradero y suela Waffle.",tags:["Vans","Skate","Classic"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1543508282-6319a3e2621f?w=700&q=85&fit=crop",images:[]},
+    {id:6,name:"Converse Chuck 70",price:"$58.000",badge:"",brand:"Converse",stock:7,sizes:["38","39","40","41","42","43"],desc:"Versión premium del All Star. Suela más gruesa, mejor terminación interior y canvas de mayor densidad.",tags:["Converse","Chuck","Retro"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1494496195158-c3bc975a47b0?w=700&q=85&fit=crop",images:[]},
+    {id:7,name:"Nike Air Force 1",price:"$88.000",badge:"HOT",brand:"Nike",stock:12,sizes:["40","41","42","43","44","45"],desc:"El modelo más vendido de Nike en la historia. All white, suela de Air y cuero premium.",tags:["Nike","AF1","Blancas"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=700&q=85&fit=crop",images:[]},
+    {id:8,name:"Puma Suede Classic",price:"$49.000",badge:"",brand:"Puma",stock:9,sizes:["39","40","41","42","43"],desc:"Un ícono desde 1968. Suede genuino y suela Formstrip que no pasa de moda.",tags:["Puma","Suede","Clasico"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1556906781-4f5f44a70e58?w=700&q=85&fit=crop",images:[]},
+    {id:9,name:"Asics Gel-Lyte III",price:"$78.000",badge:"NEW",brand:"Asics",stock:4,sizes:["40","41","42","43","44"],desc:"Cushioning GEL legendario en silueta lowkey perfecta para coleccionistas del running vintage.",tags:["Asics","Gel","Running"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1562183241-b937e9102f69?w=700&q=85&fit=crop",images:[]},
+    {id:10,name:"Reebok Classic Leather",price:"$52.000",badge:"",brand:"Reebok",stock:6,sizes:["39","40","41","42","43"],desc:"El más icónico de Reebok. Cuero suave y fit ergonómico que se adapta al pie desde el primer uso.",tags:["Reebok","Classic","Leather"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=700&q=85&fit=crop",images:[]},
+    {id:11,name:"On Cloudmonster",price:"$130.000",badge:"DROP",brand:"On Running",stock:2,sizes:["41","42","43","44"],desc:"Máxima amortiguación con tecnología CloudTec de 38 pods. El futuro del running en silueta chunky.",tags:["On Running","Cloud","Running"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=700&q=85&fit=crop",images:[]},
+    {id:12,name:"New Balance 990v5",price:"$110.000",badge:"NEW",brand:"New Balance",stock:3,sizes:["40","41","42","43","44","45"],desc:"Made in USA. La pinnacle de New Balance con ENCAP y foam de doble densidad. Gris clásico inmortal.",tags:["New Balance","USA","Premium"],cat:"Zapatillas",img:"https://images.unsplash.com/photo-1539185540738-b6e98c72d05a?w=700&q=85&fit=crop",images:[]}
   ],
   ropa:[
-    {id:13,name:"Hoodie DRACO Classic",price:"$38.000",badge:"NEW",desc:"Buzo con capucha de algodón french terry 380gsm. Fit oversize con bolsillo canguro y cordón plano.",tags:["Hoodie","Oversize","380gsm"],cat:"Ropa",img:"https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=85&fit=crop"},
-    {id:14,name:"Tee Essential Black",price:"$22.000",badge:"",desc:"Remera básica de algodón ring-spun 200gsm. Corte regular con costuras dobles. Base de todo armado.",tags:["Tee","Basic","200gsm"],cat:"Ropa",img:"https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=700&q=85&fit=crop"},
-    {id:15,name:"Jogger Cargo DRACO",price:"$45.000",badge:"HOT",desc:"Pantalón cargo con 6 bolsillos y elástico en tobillo. Fit tapered en ripstop liviano.",tags:["Cargo","Jogger","Ripstop"],cat:"Ropa",img:"https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=700&q=85&fit=crop"},
-    {id:16,name:"Coach Jacket Dragon",price:"$62.000",badge:"DROP",desc:"Campera rompeviento con interior de malla, logo bordado en pecho y puños en rib. Impermeable.",tags:["Jacket","Coach","Bordado"],cat:"Ropa",img:"https://images.unsplash.com/photo-1551028719-00167b16eac5?w=700&q=85&fit=crop"},
-    {id:17,name:"Tee Oversize White",price:"$24.000",badge:"",desc:"Remera oversized con hombros descendidos. 100% algodón orgánico con lavado enzimático suave.",tags:["Tee","Oversize","Organico"],cat:"Ropa",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=85&fit=crop"},
-    {id:18,name:"Hoodie Draco Red",price:"$40.000",badge:"NEW",desc:"Versión roja del hoodie clásico con detalle de dragón bordado en manga derecha. 380gsm french terry.",tags:["Hoodie","Rojo","Bordado"],cat:"Ropa",img:"https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=700&q=85&fit=crop"},
-    {id:19,name:"Crewneck Street",price:"$35.000",badge:"",desc:"Suéter cuello redondo de felpa francesa 320gsm. Bordado tonal en pecho izquierdo. Fit ligeramente oversize.",tags:["Crew","Felpa","Bordado"],cat:"Ropa",img:"https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=700&q=85&fit=crop"},
-    {id:20,name:"Set Deportivo DRACO",price:"$75.000",badge:"DROP",desc:"Conjunto edición limitada: hoodie + jogger mismo colorway. Logo sublimado. Pocas unidades.",tags:["Set","Conjunto","Limitado"],cat:"Ropa",img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=700&q=85&fit=crop"}
+    {id:13,name:"Hoodie DRACO Classic",price:"$38.000",badge:"NEW",brand:"DRACO",stock:15,sizes:["S","M","L","XL"],desc:"Buzo con capucha de algodón french terry 380gsm. Fit oversize con bolsillo canguro y cordón plano.",tags:["Hoodie","Oversize","380gsm"],cat:"Ropa",img:"https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=85&fit=crop",images:[]},
+    {id:14,name:"Tee Essential Black",price:"$22.000",badge:"",brand:"DRACO",stock:20,sizes:["XS","S","M","L","XL"],desc:"Remera básica de algodón ring-spun 200gsm. Corte regular con costuras dobles. Base de todo armado.",tags:["Tee","Basic","200gsm"],cat:"Ropa",img:"https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=700&q=85&fit=crop",images:[]},
+    {id:15,name:"Jogger Cargo DRACO",price:"$45.000",badge:"HOT",brand:"DRACO",stock:8,sizes:["S","M","L","XL"],desc:"Pantalón cargo con 6 bolsillos y elástico en tobillo. Fit tapered en ripstop liviano.",tags:["Cargo","Jogger","Ripstop"],cat:"Ropa",img:"https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=700&q=85&fit=crop",images:[]},
+    {id:16,name:"Coach Jacket Dragon",price:"$62.000",badge:"DROP",brand:"DRACO",stock:4,sizes:["S","M","L","XL"],desc:"Campera rompeviento con interior de malla, logo bordado en pecho y puños en rib. Impermeable.",tags:["Jacket","Coach","Bordado"],cat:"Ropa",img:"https://images.unsplash.com/photo-1551028719-00167b16eac5?w=700&q=85&fit=crop",images:[]},
+    {id:17,name:"Tee Oversize White",price:"$24.000",badge:"",brand:"DRACO",stock:18,sizes:["XS","S","M","L","XL"],desc:"Remera oversized con hombros descendidos. 100% algodón orgánico con lavado enzimático suave.",tags:["Tee","Oversize","Organico"],cat:"Ropa",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=85&fit=crop",images:[]},
+    {id:18,name:"Hoodie Draco Red",price:"$40.000",badge:"NEW",brand:"DRACO",stock:10,sizes:["S","M","L","XL"],desc:"Versión roja del hoodie clásico con detalle de dragón bordado en manga derecha. 380gsm french terry.",tags:["Hoodie","Rojo","Bordado"],cat:"Ropa",img:"https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=700&q=85&fit=crop",images:[]},
+    {id:19,name:"Crewneck Street",price:"$35.000",badge:"",brand:"DRACO",stock:11,sizes:["S","M","L","XL"],desc:"Suéter cuello redondo de felpa francesa 320gsm. Bordado tonal en pecho izquierdo. Fit ligeramente oversize.",tags:["Crew","Felpa","Bordado"],cat:"Ropa",img:"https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=700&q=85&fit=crop",images:[]},
+    {id:20,name:"Set Deportivo DRACO",price:"$75.000",badge:"DROP",brand:"DRACO",stock:3,sizes:["S","M","L","XL"],desc:"Conjunto edición limitada: hoodie + jogger mismo colorway. Logo sublimado. Pocas unidades.",tags:["Set","Conjunto","Limitado"],cat:"Ropa",img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=700&q=85&fit=crop",images:[]}
   ]
 };
 
 function loadCat(){
-  try{const s=sessionStorage.getItem('draco6');return s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT));}
+  try{const s=sessionStorage.getItem('draco7');return s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT));}
   catch(e){return JSON.parse(JSON.stringify(DEFAULT));}
 }
-function saveCat(){try{sessionStorage.setItem('draco6',JSON.stringify(cat));}catch(e){}}
+function saveCat(){try{sessionStorage.setItem('draco7',JSON.stringify(cat));}catch(e){}}
 
 let cat=loadCat(), nid=100, isAdmin=false, editTarget=null, delTarget=null, pendingImg=null;
+let activeFilters={brand:'todos',size:'todos'};
+let detailQty=1, detailSelectedSize=null;
+
 function $(id){return document.getElementById(id);}
 
+// SPLASH
+(function(){
+  const logo=$('splashLogo');
+  setTimeout(()=>logo.classList.add('show'),120);
+  setTimeout(()=>$('splash').classList.add('hide'),900);
+  setTimeout(()=>{$('splash').style.display='none';},1560);
+})();
+
 // NAV ACTIVE ON SCROLL
-const obs=new IntersectionObserver(entries=>{
+const navObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
       document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
@@ -405,22 +585,74 @@ const obs=new IntersectionObserver(entries=>{
     }
   });
 },{threshold:0.25,rootMargin:'-10% 0px -60% 0px'});
-['inicio','zapatillas','ropa'].forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
+['inicio','zapatillas','ropa'].forEach(id=>{const el=document.getElementById(id);if(el)navObs.observe(el);});
+
+// REVEAL ANIMATION
+const revealObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+// FILTER
+function setFilter(type,val){
+  activeFilters[type]=val;
+  document.querySelectorAll('[data-filter="'+type+'"]').forEach(b=>{
+    b.classList.toggle('active',b.dataset.val===val);
+  });
+  renderGrid('zapatillas');
+}
+
+function getFilteredZap(){
+  return cat.zapatillas.filter(p=>{
+    const brandOk=activeFilters.brand==='todos'||
+      (p.brand&&p.brand.toLowerCase()===activeFilters.brand.toLowerCase())||
+      (p.tags&&p.tags.some(t=>t.toLowerCase()===activeFilters.brand.toLowerCase()))||
+      (p.name&&p.name.toLowerCase().includes(activeFilters.brand.toLowerCase()));
+    const sizeOk=activeFilters.size==='todos'||
+      (p.sizes&&p.sizes.includes(activeFilters.size));
+    return brandOk&&sizeOk;
+  });
+}
+
+// RENDER DROPS (first 4 zapatillas)
+function renderDrops(){
+  const grid=$('gridDrops');
+  if(!grid)return;
+  const items=cat.zapatillas.slice(0,4);
+  grid.innerHTML='';
+  items.forEach((p,i)=>{
+    const c=document.createElement('div');
+    c.className='pcard fadein';
+    c.style.animationDelay=(i*.06)+'s';
+    c.innerHTML=
+      '<img class="pcard-img" src="'+p.img+'" alt="'+p.name+'" loading="lazy">'
+      +'<div class="pcard-grad"></div>'
+      +'<div class="pcard-info">'
+        +'<div class="pcard-name">'+p.name+'</div>'
+        +'<div class="pcard-price">'+p.price+'</div>'
+      +'</div>'
+      +(p.badge?'<div class="badge">'+p.badge+'</div>':'');
+    c.addEventListener('click',()=>openDetail(p));
+    grid.appendChild(c);
+  });
+}
 
 // RENDER GRIDS
-function renderAll(){renderGrid('zapatillas');renderGrid('ropa');}
+function renderAll(){renderDrops();renderGrid('zapatillas');renderGrid('ropa');}
 
 function renderGrid(tab){
   const grid=$(tab==='zapatillas'?'gridZap':'gridRopa');
   const cnt=$(tab==='zapatillas'?'cntZap':'cntRopa');
-  const items=cat[tab];
-  cnt.textContent=items.length+' producto'+(items.length!==1?'s':'');
+  const items=tab==='zapatillas'?getFilteredZap():cat.ropa;
+  const total=cat[tab].length;
+  cnt.textContent=items.length+(items.length!==total?' / '+total:'')+' producto'+(total!==1?'s':'');
   grid.innerHTML='';
   if(!items.length){
     grid.innerHTML='<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--g);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;">Sin productos</div>';
     return;
   }
   items.forEach((p,i)=>{
+    const origIdx=cat[tab].indexOf(p);
     const c=document.createElement('div');
     c.className='pcard fadein';
     c.style.animationDelay=(i*.04)+'s';
@@ -432,22 +664,75 @@ function renderGrid(tab){
         +'<div class="pcard-price">'+p.price+'</div>'
       +'</div>'
       +(p.badge?'<div class="badge">'+p.badge+'</div>':'')
-      +'<button class="pcard-del" onclick="event.stopPropagation();askDel(\''+tab+'\','+i+')">&#10005;</button>';
+      +'<button class="pcard-del" onclick="event.stopPropagation();askDel(\''+tab+'\','+origIdx+')">&#10005;</button>';
     c.addEventListener('click',()=>openDetail(p));
     grid.appendChild(c);
   });
 }
 
 // DETAIL
+let currentDetailProduct=null;
 function openDetail(p){
+  currentDetailProduct=p;
+  detailQty=1;
+  detailSelectedSize=null;
   $('dtImg').src=p.img; $('dtImg').alt=p.name;
+  // Thumbnails (structure for up to 3, show 1 for now)
+  const imgs=[p.img,...(p.images||[])].slice(0,3);
+  const thumbsEl=$('dtThumbs');
+  if(imgs.length>1){
+    thumbsEl.innerHTML=imgs.map((src,i)=>
+      '<img class="pd-thumb'+(i===0?' active':'')+'" src="'+src+'" alt="'+p.name+' '+(i+1)+'" onclick="switchDetailImg(\''+src+'\',this)">'
+    ).join('');
+  } else {
+    thumbsEl.innerHTML='';
+  }
   $('dtCat').textContent=p.cat;
   $('dtName').textContent=p.name;
   $('dtPrice').textContent=p.price;
   $('dtDesc').textContent=p.desc;
   $('dtTags').innerHTML=(p.tags||[]).map(t=>'<span class="pd-tag">'+t+'</span>').join('');
+  $('dtQty').textContent='1';
+  // Sizes
+  const sizesEl=$('dtSizes');
+  const sizesLabel=$('dtSizesLabel');
+  if(p.sizes&&p.sizes.length){
+    sizesLabel.style.display='';
+    sizesEl.innerHTML=p.sizes.map(s=>
+      '<button class="size-pill" onclick="selectSize(this,\''+s+'\')">'+s+'</button>'
+    ).join('');
+  } else {
+    sizesLabel.style.display='none';
+    sizesEl.innerHTML='';
+  }
   $('dtWsp').href='https://wa.me/'+WSP+'?text='+encodeURIComponent('Hola DRACO! Quiero consultar por '+p.name+' ('+p.price+')');
   openModal('ovDetail');
+}
+function switchDetailImg(src,el){
+  $('dtImg').src=src;
+  document.querySelectorAll('.pd-thumb').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+function selectSize(btn,size){
+  document.querySelectorAll('.size-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  detailSelectedSize=size;
+  if(currentDetailProduct){
+    const p=currentDetailProduct;
+    const sizeStr=detailSelectedSize?' — Talle '+detailSelectedSize:'';
+    const qtyStr=detailQty>1?' x'+detailQty:'';
+    $('dtWsp').href='https://wa.me/'+WSP+'?text='+encodeURIComponent('Hola DRACO! Quiero consultar por '+p.name+' ('+p.price+')'+sizeStr+qtyStr);
+  }
+}
+function changeQty(delta){
+  detailQty=Math.max(1,detailQty+delta);
+  $('dtQty').textContent=detailQty;
+  if(currentDetailProduct){
+    const p=currentDetailProduct;
+    const sizeStr=detailSelectedSize?' — Talle '+detailSelectedSize:'';
+    const qtyStr=detailQty>1?' x'+detailQty:'';
+    $('dtWsp').href='https://wa.me/'+WSP+'?text='+encodeURIComponent('Hola DRACO! Quiero consultar por '+p.name+' ('+p.price+')'+sizeStr+qtyStr);
+  }
 }
 
 // LOGIN
@@ -486,7 +771,7 @@ function doLogout(){
 
 // ADMIN VIEW
 function showAdmin(){
-  ['#inicio','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
+  ['#inicio','#narrative','#drops','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
     document.querySelectorAll(s).forEach(el=>el.style.display='none');
   });
   $('sc-admin').classList.add('on');
@@ -495,7 +780,7 @@ function showAdmin(){
   window.scrollTo(0,0);
 }
 function hideAdmin(){
-  ['#inicio','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
+  ['#inicio','#narrative','#drops','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
     document.querySelectorAll(s).forEach(el=>el.style.display='');
   });
   $('sc-admin').classList.remove('on');
@@ -522,6 +807,7 @@ function renderAdminLists(){
           +'<div class="adm-item-row">'
             +'<span class="adm-item-price">'+p.price+'</span>'
             +(p.badge?'<span class="adm-item-badge">'+p.badge+'</span>':'')
+            +(p.brand?'<span style="font-size:.44rem;color:var(--g);letter-spacing:.1em;">'+p.brand+'</span>':'')
           +'</div>'
         +'</div>'
         +'<div class="adm-item-btns">'
@@ -533,16 +819,39 @@ function renderAdminLists(){
   });
 }
 
+// SIZE CHECKBOXES in admin form
+function updateSizeCheckboxes(){
+  const tab=$('fCat').value;
+  const sizeList=tab==='zapatillas'?SIZES_ZAP:SIZES_ROPA;
+  const wrap=$('fSizeChecks');
+  wrap.innerHTML=sizeList.map(s=>
+    '<div class="size-check-item">'
+    +'<input type="checkbox" id="sz_'+s+'" value="'+s+'">'
+    +'<label for="sz_'+s+'">'+s+'</label>'
+    +'</div>'
+  ).join('');
+}
+function getCheckedSizes(){
+  return Array.from(document.querySelectorAll('#fSizeChecks input[type=checkbox]:checked')).map(c=>c.value);
+}
+function setCheckedSizes(sizes){
+  document.querySelectorAll('#fSizeChecks input[type=checkbox]').forEach(c=>{
+    c.checked=sizes&&sizes.includes(c.value);
+  });
+}
+
 // ADD/EDIT
 function resetForm(){
-  ['fCat','fBadge','fName','fPrice','fDesc'].forEach(id=>{
+  ['fCat','fBadge','fName','fBrand','fPrice','fDesc'].forEach(id=>{
     const el=$(id); if(el.tagName==='SELECT')el.value='zapatillas'; else el.value='';
   });
+  $('fStock').value='';
   $('fErr').classList.remove('on');
   $('imgDropWrap').style.display='';
   $('imgPreviewWrap').style.display='none';
   $('imgPreview').src='';
   pendingImg=null; editTarget=null;
+  updateSizeCheckboxes();
 }
 function openAdd(){
   resetForm();
@@ -553,8 +862,15 @@ function openEdit(tab,idx){
   resetForm(); editTarget={tab,idx};
   const p=cat[tab][idx];
   $('shProdTitle').innerHTML='EDITAR <span>PRODUCTO</span>';
-  $('fCat').value=tab; $('fBadge').value=p.badge||'';
-  $('fName').value=p.name; $('fPrice').value=p.price; $('fDesc').value=p.desc;
+  $('fCat').value=tab;
+  updateSizeCheckboxes();
+  $('fBadge').value=p.badge||'';
+  $('fName').value=p.name;
+  $('fBrand').value=p.brand||'';
+  $('fPrice').value=p.price;
+  $('fStock').value=p.stock||'';
+  $('fDesc').value=p.desc;
+  setCheckedSizes(p.sizes||[]);
   if(p.img){$('imgDropWrap').style.display='none';$('imgPreviewWrap').style.display='';$('imgPreview').src=p.img;pendingImg=p.img;}
   openModal('ovProd');
 }
@@ -567,14 +883,16 @@ function handleImg(e){
 function removeImg(){pendingImg=null;$('imgDropWrap').style.display='';$('imgPreviewWrap').style.display='none';$('imgPreview').src='';}
 function saveProd(){
   const tab=$('fCat').value, name=$('fName').value.trim(), price=$('fPrice').value.trim(),
-        desc=$('fDesc').value.trim(), badge=$('fBadge').value.trim().toUpperCase();
+        desc=$('fDesc').value.trim(), badge=$('fBadge').value.trim().toUpperCase(),
+        brand=$('fBrand').value.trim(), stock=parseInt($('fStock').value)||0;
   const existImg=editTarget?cat[editTarget.tab][editTarget.idx].img:null;
   const img=pendingImg||existImg;
   if(!name||!price||!desc||!img){$('fErr').classList.add('on');return;}
   $('fErr').classList.remove('on');
+  const sizes=getCheckedSizes();
   const prod={
     id:editTarget?cat[editTarget.tab][editTarget.idx].id:nid++,
-    name,price,img,badge,desc,
+    name,price,img,badge,desc,brand,stock,sizes,images:[],
     tags:name.split(' ').filter(w=>w.length>2).slice(0,3),
     cat:tab==='zapatillas'?'Zapatillas':'Ropa'
   };
@@ -608,6 +926,7 @@ $('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 $('lUser').addEventListener('keydown',e=>{if(e.key==='Enter')$('lPass').focus();});
 
 // INIT
+updateSizeCheckboxes();
 renderAll();
 </script>
 </body>
