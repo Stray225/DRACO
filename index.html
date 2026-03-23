@@ -31,10 +31,14 @@ a{text-decoration:none;color:inherit;}
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);background:rgba(10,10,10,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:16px;}
 .nav-logo{cursor:pointer;display:flex;align-items:center;height:100%;padding:10px 0;flex-shrink:0;}
-.nav-logo img{height:34px;width:auto;object-fit:contain;}
+.nav-logo img{mix-blend-mode:screen;filter:brightness(1.05);height:30px;width:auto;object-fit:contain;}
 .nav-links{display:flex;align-items:center;gap:2px;}
-.nav-link{font-size:.58rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--lg);padding:0 12px;height:var(--nav);display:flex;align-items:center;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;text-decoration:none;}
-.nav-link:hover,.nav-link.active{color:var(--w);border-bottom-color:var(--red);}
+/* Nav link: animated underline pseudo-element approach */
+.nav-link{position:relative;font-size:.58rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--lg);padding:0 12px;height:var(--nav);display:flex;align-items:center;cursor:pointer;transition:color .2s;white-space:nowrap;text-decoration:none;border-bottom:none !important;}
+.nav-link::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2px;background:var(--red);transition:left .2s ease,right .2s ease;}
+.nav-link:hover{color:var(--w);}
+.nav-link:hover::after,.nav-link.active::after{left:0;right:0;}
+.nav-link.active{color:var(--w);}
 .login-btn{font-size:.56rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:8px 14px;border:1.5px solid var(--red);color:var(--red);background:none;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
 .login-btn:hover,.login-btn.logged{background:var(--red);color:#fff;}
 
@@ -70,13 +74,31 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);backgroun
 .narrative-line{font-family:"Bebas Neue",sans-serif;font-size:clamp(1.2rem,4vw,2rem);letter-spacing:.12em;color:var(--lg);line-height:1.5;text-transform:uppercase;}
 .narrative-line span{color:var(--w);}
 
-/* LATEST DROPS */
-#drops{padding:70px 12px 50px;}
-.drops-hd{padding:0 4px 20px;border-bottom:1px solid var(--bd);margin-bottom:8px;}
-.drops-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(1.6rem,6vw,2.4rem);letter-spacing:.1em;margin-bottom:2px;}
-.drops-sub{font-size:.52rem;color:var(--g);letter-spacing:.18em;text-transform:uppercase;}
-.drops-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-top:16px;}
-@media(min-width:600px){.drops-grid{grid-template-columns:repeat(4,1fr);}}
+/* FEATURED DROPS */
+#featured{padding:70px 12px 50px;}
+.featured-hd{padding:0 4px 20px;border-bottom:1px solid var(--bd);margin-bottom:8px;}
+.featured-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(1.6rem,6vw,2.4rem);letter-spacing:.1em;margin-bottom:2px;}
+.featured-sub{font-size:.52rem;color:var(--g);letter-spacing:.18em;text-transform:uppercase;}
+.featured-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-top:16px;}
+@media(min-width:600px){.featured-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:900px){.featured-grid{grid-template-columns:repeat(5,1fr);}}
+
+/* CATEGORY ENTRY BLOCKS */
+#shopby{padding:60px 12px 50px;}
+.shopby-hd{padding:0 4px 20px;border-bottom:1px solid var(--bd);margin-bottom:24px;}
+.shopby-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(1.4rem,5vw,2rem);letter-spacing:.14em;margin-bottom:2px;}
+.shopby-sub{font-size:.52rem;color:var(--g);letter-spacing:.18em;text-transform:uppercase;}
+.shopby-grid{display:grid;grid-template-columns:1fr;gap:8px;}
+@media(min-width:600px){.shopby-grid{grid-template-columns:1fr 1fr;}}
+.cat-entry{position:relative;aspect-ratio:3/2;overflow:hidden;cursor:pointer;border:1px solid var(--bd);transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;}
+.cat-entry:hover{transform:translateY(-4px);box-shadow:0 0 0 2px var(--red),var(--red-glow);border-color:var(--red);}
+.cat-entry-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.5) brightness(.5);transition:filter .4s ease,transform .4s ease;}
+.cat-entry:hover .cat-entry-img{filter:saturate(.7) brightness(.6);transform:scale(1.04);}
+.cat-entry-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.85) 0%,rgba(10,10,10,.3) 60%,transparent 100%);}
+.cat-entry-body{position:absolute;bottom:0;left:0;right:0;padding:22px 20px;}
+.cat-entry-name{font-family:"Bebas Neue",sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);letter-spacing:.12em;color:var(--w);line-height:1;margin-bottom:6px;}
+.cat-entry-cta{font-size:.52rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--red);transition:letter-spacing .2s ease;}
+.cat-entry:hover .cat-entry-cta{letter-spacing:.3em;}
 
 /* CATALOG */
 .cat-section{padding:70px 12px 50px;}
@@ -270,7 +292,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
 <!-- NAV -->
 <nav>
   <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-    <img src="favicon.png" alt="DRACO">
+    <img src="logo.png" alt="DRACO">
   </div>
   <div class="nav-links">
     <a class="nav-link active" href="#inicio">Inicio</a>
@@ -296,7 +318,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
     <div class="hero-btns">
       <a class="btn-primary" href="#zapatillas">VER ZAPATILLAS</a>
       <a class="btn-secondary" href="https://wa.me/5491121671135?text=Hola%20DRACO!%20Quiero%20consultar" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.146 1.547 5.887L.057 23.25a.75.75 0 00.916.932l5.424-1.48A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.694-.5-5.244-1.373l-.374-.216-3.875 1.057 1.029-3.772-.237-.39A9.969 9.969 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.11 1.522 5.838L.057 23.882l6.238-1.635A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.794 9.794 0 01-5.003-1.369l-.358-.213-3.722.976.994-3.623-.234-.373A9.772 9.772 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>
         WHATSAPP
       </a>
     </div>
@@ -318,13 +340,41 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
 
 <div class="sec-div"></div>
 
-<!-- LATEST DROPS -->
-<section id="drops" class="reveal">
-  <div class="drops-hd">
-    <div class="drops-title">LATEST DROPS</div>
-    <div class="drops-sub">Colección actual</div>
+<!-- FEATURED DROPS -->
+<section id="featured" class="reveal">
+  <div class="featured-hd">
+    <div class="featured-title">FEATURED DROPS</div>
+    <div class="featured-sub">Selección actual &middot; Buenos Aires</div>
   </div>
-  <div class="drops-grid" id="gridDrops"></div>
+  <div class="featured-grid" id="gridFeatured"></div>
+</section>
+
+<div class="sec-div"></div>
+
+<!-- SHOP BY CATEGORY -->
+<section id="shopby" class="reveal">
+  <div class="shopby-hd">
+    <div class="shopby-title">SHOP BY CATEGORY</div>
+    <div class="shopby-sub">Explorá la colección completa</div>
+  </div>
+  <div class="shopby-grid">
+    <div class="cat-entry" id="catEntryZap" onclick="document.getElementById('zapatillas').scrollIntoView({behavior:'smooth'})">
+      <img class="cat-entry-img" id="catEntryZapImg" src="" alt="Zapatillas">
+      <div class="cat-entry-overlay"></div>
+      <div class="cat-entry-body">
+        <div class="cat-entry-name">ZAPATILLAS</div>
+        <div class="cat-entry-cta">VER COLECCIÓN &rarr;</div>
+      </div>
+    </div>
+    <div class="cat-entry" id="catEntryRopa" onclick="document.getElementById('ropa').scrollIntoView({behavior:'smooth'})">
+      <img class="cat-entry-img" id="catEntryRopaImg" src="" alt="Ropa">
+      <div class="cat-entry-overlay"></div>
+      <div class="cat-entry-body">
+        <div class="cat-entry-name">ROPA</div>
+        <div class="cat-entry-cta">VER COLECCIÓN &rarr;</div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <div class="sec-div"></div>
@@ -375,7 +425,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
 <footer class="reveal">
   <div class="footer-inner">
     <div class="footer-col">
-      <div class="footer-logo-wrap"><img src="favicon.png" alt="DRACO"></div>
+      <div class="footer-logo-wrap"><img src="logo.png" alt="DRACO"></div>
       <div class="footer-tagline">EXCLUSIVE SNEAKERS · BUENOS AIRES</div>
     </div>
     <div class="footer-col">
@@ -386,7 +436,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
           @draco.bsas
         </a>
         <a class="footer-social-link" href="https://wa.me/5491121671135" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.146 1.547 5.887L.057 23.25a.75.75 0 00.916.932l5.424-1.48A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.694-.5-5.244-1.373l-.374-.216-3.875 1.057 1.029-3.772-.237-.39A9.969 9.969 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.11 1.522 5.838L.057 23.882l6.238-1.635A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.794 9.794 0 01-5.003-1.369l-.358-.213-3.722.976.994-3.623-.234-.373A9.772 9.772 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>
           +54 9 11 2167-1135
         </a>
       </div>
@@ -425,7 +475,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
 
 <!-- WSP FLOAT -->
 <a class="wsp-fab" id="wspFab" href="https://wa.me/5491121671135?text=Hola%20DRACO!" target="_blank" rel="noopener" aria-label="WhatsApp">
-  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.146 1.547 5.887L.057 23.25a.75.75 0 00.916.932l5.424-1.48A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.694-.5-5.244-1.373l-.374-.216-3.875 1.057 1.029-3.772-.237-.39A9.969 9.969 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.11 1.522 5.838L.057 23.882l6.238-1.635A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.794 9.794 0 01-5.003-1.369l-.358-.213-3.722.976.994-3.623-.234-.373A9.772 9.772 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>
 </a>
 
 <!-- FAB -->
@@ -454,7 +504,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
         <button class="qty-btn" onclick="changeQty(1)">&#43;</button>
       </div>
       <a class="wsp-btn" id="dtWsp" href="#" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.146 1.547 5.887L.057 23.25a.75.75 0 00.916.932l5.424-1.48A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.694-.5-5.244-1.373l-.374-.216-3.875 1.057 1.029-3.772-.237-.39A9.969 9.969 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.11 1.522 5.838L.057 23.882l6.238-1.635A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.794 9.794 0 01-5.003-1.369l-.358-.213-3.722.976.994-3.623-.234-.373A9.772 9.772 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>
         COMPRAR POR WHATSAPP
       </a>
       <button class="cart-btn" onclick="alert('Carrito — próximamente')">AGREGAR AL CARRITO</button>
@@ -614,16 +664,19 @@ function getFilteredZap(){
   });
 }
 
-// RENDER DROPS (first 4 zapatillas)
-function renderDrops(){
-  const grid=$('gridDrops');
+// RENDER FEATURED (6 zapatillas + 4 ropa = 10 mixed)
+function renderFeatured(){
+  const grid=$('gridFeatured');
   if(!grid)return;
-  const items=cat.zapatillas.slice(0,4);
+  const zap=cat.zapatillas.slice(0,6);
+  const ropa=cat.ropa.slice(0,4);
+  // interleave: 3 zap, 2 ropa, 3 zap, 2 ropa
+  const items=[zap[0],zap[1],zap[2],ropa[0],ropa[1],zap[3],zap[4],zap[5],ropa[2],ropa[3]].filter(Boolean);
   grid.innerHTML='';
   items.forEach((p,i)=>{
     const c=document.createElement('div');
     c.className='pcard fadein';
-    c.style.animationDelay=(i*.06)+'s';
+    c.style.animationDelay=(i*.05)+'s';
     c.innerHTML=
       '<img class="pcard-img" src="'+p.img+'" alt="'+p.name+'" loading="lazy">'
       +'<div class="pcard-grad"></div>'
@@ -635,10 +688,15 @@ function renderDrops(){
     c.addEventListener('click',()=>openDetail(p));
     grid.appendChild(c);
   });
+  // Set category entry block images from live data
+  const zapImg=$('catEntryZapImg');
+  const ropaImg=$('catEntryRopaImg');
+  if(zapImg&&cat.zapatillas.length)zapImg.src=cat.zapatillas[0].img;
+  if(ropaImg&&cat.ropa.length)ropaImg.src=cat.ropa[0].img;
 }
 
 // RENDER GRIDS
-function renderAll(){renderDrops();renderGrid('zapatillas');renderGrid('ropa');}
+function renderAll(){renderFeatured();renderGrid('zapatillas');renderGrid('ropa');}
 
 function renderGrid(tab){
   const grid=$(tab==='zapatillas'?'gridZap':'gridRopa');
@@ -771,7 +829,7 @@ function doLogout(){
 
 // ADMIN VIEW
 function showAdmin(){
-  ['#inicio','#narrative','#drops','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
+  ['#inicio','#narrative','#featured','#shopby','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
     document.querySelectorAll(s).forEach(el=>el.style.display='none');
   });
   $('sc-admin').classList.add('on');
@@ -780,7 +838,7 @@ function showAdmin(){
   window.scrollTo(0,0);
 }
 function hideAdmin(){
-  ['#inicio','#narrative','#drops','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
+  ['#inicio','#narrative','#featured','#shopby','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
     document.querySelectorAll(s).forEach(el=>el.style.display='');
   });
   $('sc-admin').classList.remove('on');
