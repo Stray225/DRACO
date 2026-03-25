@@ -44,7 +44,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);backgroun
 .login-btn:hover,.login-btn.logged{background:var(--red);color:#fff;}
 
 /* HERO */
-#inicio{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:var(--nav) 0 80px;}
+#inicio{position:relative;min-height:52vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:var(--nav) 0 60px;}
 .hero-bg{position:absolute;inset:0;overflow:hidden;}
 .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.22) saturate(.6);transform:scale(1.06);}
 .hero-overlay{position:absolute;inset:0;background:
@@ -296,9 +296,9 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
     <img src="logo.png" alt="DRACO">
   </div>
   <div class="nav-links">
-    <a class="nav-link active" href="#inicio">Inicio</a>
-    <a class="nav-link" href="#zapatillas">Zapatillas</a>
-    <a class="nav-link" href="#ropa">Ropa</a>
+    <a class="nav-link active" href="index.html">Inicio</a>
+    <a class="nav-link" href="zapatillas.html">Zapatillas</a>
+    <a class="nav-link" href="ropa.html">Ropa</a>
   </div>
   <button class="login-btn" id="loginNavBtn" onclick="clickLogin()">Login</button>
 </nav>
@@ -359,7 +359,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
     <div class="shopby-sub">Explorá la colección completa</div>
   </div>
   <div class="shopby-grid">
-    <div class="cat-entry" id="catEntryZap" onclick="document.getElementById('zapatillas').scrollIntoView({behavior:'smooth'})">
+    <div class="cat-entry" id="catEntryZap" onclick="window.location.href='zapatillas.html'">
       <img class="cat-entry-img" id="catEntryZapImg" src="" alt="Zapatillas">
       <div class="cat-entry-overlay"></div>
       <div class="cat-entry-body">
@@ -367,7 +367,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
         <div class="cat-entry-cta">VER COLECCIÓN &rarr;</div>
       </div>
     </div>
-    <div class="cat-entry" id="catEntryRopa" onclick="document.getElementById('ropa').scrollIntoView({behavior:'smooth'})">
+    <div class="cat-entry" id="catEntryRopa" onclick="window.location.href='ropa.html'">
       <img class="cat-entry-img" id="catEntryRopaImg" src="" alt="Ropa">
       <div class="cat-entry-overlay"></div>
       <div class="cat-entry-body">
@@ -378,49 +378,6 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
   </div>
 </section>
 
-<div class="sec-div"></div>
-
-<!-- ZAPATILLAS -->
-<section id="zapatillas" class="cat-section reveal">
-  <div class="cat-section-hd">
-    <div class="cat-section-title">ZAPATILLAS</div>
-    <div class="cat-section-count" id="cntZap"></div>
-  </div>
-  <!-- FILTER BAR -->
-  <div class="filter-bar" id="filterBarZap">
-    <div class="filter-group">
-      <span class="filter-label">Marca</span>
-      <button class="filter-pill active" data-filter="brand" data-val="todos" onclick="setFilter('brand','todos')">Todos</button>
-      <button class="filter-pill" data-filter="brand" data-val="Nike" onclick="setFilter('brand','Nike')">Nike</button>
-      <button class="filter-pill" data-filter="brand" data-val="Adidas" onclick="setFilter('brand','Adidas')">Adidas</button>
-      <button class="filter-pill" data-filter="brand" data-val="Jordan" onclick="setFilter('brand','Jordan')">Jordan</button>
-      <button class="filter-pill" data-filter="brand" data-val="Puma" onclick="setFilter('brand','Puma')">Puma</button>
-    </div>
-    <div class="filter-sep"></div>
-    <div class="filter-group">
-      <span class="filter-label">Talle</span>
-      <button class="filter-pill active" data-filter="size" data-val="todos" onclick="setFilter('size','todos')">Todos</button>
-      <button class="filter-pill" data-filter="size" data-val="40" onclick="setFilter('size','40')">40</button>
-      <button class="filter-pill" data-filter="size" data-val="41" onclick="setFilter('size','41')">41</button>
-      <button class="filter-pill" data-filter="size" data-val="42" onclick="setFilter('size','42')">42</button>
-      <button class="filter-pill" data-filter="size" data-val="43" onclick="setFilter('size','43')">43</button>
-      <button class="filter-pill" data-filter="size" data-val="44" onclick="setFilter('size','44')">44</button>
-      <button class="filter-pill" data-filter="size" data-val="45" onclick="setFilter('size','45')">45</button>
-    </div>
-  </div>
-  <div class="cat-grid" id="gridZap" style="margin-top:16px;"></div>
-</section>
-
-<div class="sec-div"></div>
-
-<!-- ROPA -->
-<section id="ropa" class="cat-section reveal">
-  <div class="cat-section-hd">
-    <div class="cat-section-title">ROPA</div>
-    <div class="cat-section-count" id="cntRopa"></div>
-  </div>
-  <div class="cat-grid" id="gridRopa"></div>
-</section>
 
 <!-- FOOTER -->
 <footer class="reveal">
@@ -685,7 +642,7 @@ const navObs=new IntersectionObserver(entries=>{
     }
   });
 },{threshold:0.25,rootMargin:'-10% 0px -60% 0px'});
-['inicio','zapatillas','ropa'].forEach(id=>{const el=document.getElementById(id);if(el)navObs.observe(el);});
+['inicio','narrative','featured','shopby'].forEach(id=>{const el=document.getElementById(id);if(el)navObs.observe(el);});
 
 // REVEAL ANIMATION
 const revealObs=new IntersectionObserver(entries=>{
@@ -745,8 +702,8 @@ function renderFeatured(){
   if(ropaImg&&cat.ropa.length)ropaImg.src=cat.ropa[0].img;
 }
 
-// RENDER GRIDS
-function renderAll(){renderFeatured();renderGrid('zapatillas');renderGrid('ropa');}
+// Homepage only renders featured + category entry images
+function renderAll(){renderFeatured();}
 
 function renderGrid(tab){
   const grid=$(tab==='zapatillas'?'gridZap':'gridRopa');
@@ -879,7 +836,7 @@ function doLogout(){
 
 // ADMIN VIEW
 function showAdmin(){
-  ['#inicio','#narrative','#featured','#shopby','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
+  ['#inicio','#narrative','#featured','#shopby','footer','.sec-div'].forEach(s=>{
     document.querySelectorAll(s).forEach(el=>el.style.display='none');
   });
   $('sc-admin').classList.add('on');
@@ -888,7 +845,7 @@ function showAdmin(){
   window.scrollTo(0,0);
 }
 function hideAdmin(){
-  ['#inicio','#narrative','#featured','#shopby','#zapatillas','#ropa','footer','.sec-div'].forEach(s=>{
+  ['#inicio','#narrative','#featured','#shopby','footer','.sec-div'].forEach(s=>{
     document.querySelectorAll(s).forEach(el=>el.style.display='');
   });
   $('sc-admin').classList.remove('on');
