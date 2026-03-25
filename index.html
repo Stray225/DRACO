@@ -44,7 +44,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);backgroun
 .login-btn:hover,.login-btn.logged{background:var(--red);color:#fff;}
 
 /* HERO */
-#inicio{position:relative;min-height:52vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:var(--nav) 0 60px;}
+#inicio{position:relative;min-height:30vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:var(--nav) 0 48px;}
 .hero-bg{position:absolute;inset:0;overflow:hidden;}
 .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.22) saturate(.6);transform:scale(1.06);}
 .hero-overlay{position:absolute;inset:0;background:
@@ -203,11 +203,10 @@ body.adm .pcard-del{display:block;}
 .img-preview{position:relative;margin-bottom:14px;}
 .img-preview img{width:100%;max-height:180px;object-fit:cover;}
 .img-rm{position:absolute;top:8px;right:8px;background:rgba(10,10,10,.9);border:1px solid var(--bd);color:var(--w);font-size:.52rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 8px;cursor:pointer;}
-/* Size checkboxes in admin form */
+/* Size toggle pills in admin form */
 .size-checks{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
-.size-check-item{display:flex;align-items:center;gap:5px;}
-.size-check-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--red);cursor:pointer;}
-.size-check-item label{font-size:.55rem;color:var(--lg);letter-spacing:.08em;cursor:pointer;}
+.size-toggle{font-size:.52rem;font-weight:600;letter-spacing:.08em;padding:6px 13px;border:1px solid var(--bd);color:var(--lg);background:none;cursor:pointer;transition:all .15s;}
+.size-toggle.active{border-color:var(--red);color:#fff;background:var(--red);}
 
 /* ADMIN */
 .adm-wrap{padding:calc(var(--nav) + 20px) 16px 100px;}
@@ -531,7 +530,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
 </div>
 
 <script>
-const ADMIN_USER='admin', ADMIN_PASS='draco2025', WSP='5491121671135';
+const ADMIN_USER='admin', ADMIN_PASS='admin', WSP='5491121671135';
 
 // ── SUPABASE ──
 const _SB_URL  = 'https://qdvpqcabiaympxqbccnr.supabase.co';
@@ -813,6 +812,7 @@ function doLogin(){
   const u=$('lUser').value.trim(), p=$('lPass').value;
   if(u===ADMIN_USER&&p===ADMIN_PASS){
     isAdmin=true;
+    sessionStorage.setItem('draco_adm','1');
     document.body.classList.add('adm');
     $('loginNavBtn').classList.add('logged');
     $('loginNavBtn').textContent='Panel';
@@ -827,6 +827,7 @@ function doLogin(){
 }
 function doLogout(){
   isAdmin=false;
+  sessionStorage.removeItem('draco_adm');
   document.body.classList.remove('adm');
   $('loginNavBtn').classList.remove('logged');
   $('loginNavBtn').textContent='Login';
@@ -884,24 +885,20 @@ function renderAdminLists(){
   });
 }
 
-// SIZE CHECKBOXES in admin form
+// SIZE TOGGLE PILLS in admin form
 function updateSizeCheckboxes(){
   const tab=$('fCat').value;
   const sizeList=tab==='zapatillas'?SIZES_ZAP:SIZES_ROPA;
-  const wrap=$('fSizeChecks');
-  wrap.innerHTML=sizeList.map(s=>
-    '<div class="size-check-item">'
-    +'<input type="checkbox" id="sz_'+s+'" value="'+s+'">'
-    +'<label for="sz_'+s+'">'+s+'</label>'
-    +'</div>'
+  $('fSizeChecks').innerHTML=sizeList.map(s=>
+    '<button type="button" class="size-toggle" onclick="this.classList.toggle(\'active\')">'+s+'</button>'
   ).join('');
 }
 function getCheckedSizes(){
-  return Array.from(document.querySelectorAll('#fSizeChecks input[type=checkbox]:checked')).map(c=>c.value);
+  return Array.from(document.querySelectorAll('#fSizeChecks .size-toggle.active')).map(b=>b.textContent.trim());
 }
 function setCheckedSizes(sizes){
-  document.querySelectorAll('#fSizeChecks input[type=checkbox]').forEach(c=>{
-    c.checked=sizes&&sizes.includes(c.value);
+  document.querySelectorAll('#fSizeChecks .size-toggle').forEach(b=>{
+    b.classList.toggle('active', sizes&&sizes.includes(b.textContent.trim()));
   });
 }
 
@@ -1011,9 +1008,20 @@ document.querySelectorAll('.modal-bg').forEach(m=>{
 $('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 $('lUser').addEventListener('keydown',e=>{if(e.key==='Enter')$('lPass').focus();});
 
+// ── SESSION RESTORE ──
+function restoreSession(){
+  if(sessionStorage.getItem('draco_adm')!=='1') return;
+  isAdmin=true;
+  document.body.classList.add('adm');
+  $('loginNavBtn').classList.add('logged');
+  $('loginNavBtn').textContent='Panel';
+  $('fab').classList.add('on');
+}
+
 // ── ASYNC INIT (Supabase) ──
 async function initApp() {
   updateSizeCheckboxes();
+  restoreSession();
   // Show loading placeholders
   ['gridZap','gridRopa','gridFeatured'].forEach(id=>{
     const el=$(id); if(!el)return;

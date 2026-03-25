@@ -132,9 +132,8 @@ body.adm .pcard-del{display:block;}
 .img-preview img{width:100%;max-height:180px;object-fit:cover;}
 .img-rm{position:absolute;top:8px;right:8px;background:rgba(10,10,10,.9);border:1px solid var(--bd);color:var(--w);font-size:.52rem;font-weight:600;padding:5px 8px;cursor:pointer;}
 .size-checks{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
-.size-check-item{display:flex;align-items:center;gap:5px;}
-.size-check-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--red);cursor:pointer;}
-.size-check-item label{font-size:.55rem;color:var(--lg);letter-spacing:.08em;cursor:pointer;}
+.size-toggle{font-size:.52rem;font-weight:600;letter-spacing:.08em;padding:6px 13px;border:1px solid var(--bd);color:var(--lg);background:none;cursor:pointer;transition:all .15s;}
+.size-toggle.active{border-color:var(--red);color:#fff;background:var(--red);}
 
 /* FAB / WSP */
 .fab{position:fixed;bottom:24px;right:20px;z-index:500;width:54px;height:54px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:1.7rem;line-height:1;font-weight:300;box-shadow:0 4px 20px rgba(224,32,32,.5);display:none;align-items:center;justify-content:center;transition:transform .15s;}
@@ -399,18 +398,28 @@ function clickLogin(){
 function doLogin(){
   const u=$('lUser').value.trim(),p=$('lPass').value;
   if(u===ADMIN_USER&&p===ADMIN_PASS){
-    isAdmin=true;document.body.classList.add('adm');
+    isAdmin=true;
+    sessionStorage.setItem('draco_adm','1');
+    document.body.classList.add('adm');
     $('loginNavBtn').classList.add('logged');$('loginNavBtn').textContent='Admin ✓';
     $('fab').classList.add('on');closeModal('ovLogin');
   }else{$('lErr').classList.add('on');$('lPass').value='';setTimeout(()=>$('lPass').focus(),50);}
 }
+function restoreSession(){
+  if(sessionStorage.getItem('draco_adm')!=='1') return;
+  isAdmin=true;document.body.classList.add('adm');
+  $('loginNavBtn').classList.add('logged');$('loginNavBtn').textContent='Admin ✓';
+  $('fab').classList.add('on');
+}
 
 // ADMIN FORM
-function initSizeChecks(){
-  $('fSizeChecks').innerHTML=SIZES_ZAP.map(s=>'<div class="size-check-item"><input type="checkbox" id="sz_'+s+'" value="'+s+'"><label for="sz_'+s+'">'+s+'</label></div>').join('');
+function initSizeChecks(selected){
+  $('fSizeChecks').innerHTML=SIZES_ZAP.map(s=>
+    '<button type="button" class="size-toggle'+(selected&&selected.includes(s)?' active':'')+'" onclick="this.classList.toggle(\'active\')">'+s+'</button>'
+  ).join('');
 }
-function getCheckedSizes(){return Array.from(document.querySelectorAll('#fSizeChecks input:checked')).map(c=>c.value);}
-function setCheckedSizes(sizes){document.querySelectorAll('#fSizeChecks input').forEach(c=>{c.checked=sizes&&sizes.includes(c.value);});}
+function getCheckedSizes(){return Array.from(document.querySelectorAll('#fSizeChecks .size-toggle.active')).map(b=>b.textContent.trim());}
+function setCheckedSizes(sizes){initSizeChecks(sizes);}
 
 function openAdd(){
   editTarget=null;pendingImg=null;
@@ -475,6 +484,7 @@ $('lUser').addEventListener('keydown',e=>{if(e.key==='Enter')$('lPass').focus();
 
 // INIT
 async function initApp(){
+  restoreSession();
   $('gridZap').innerHTML='<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--g);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;">Cargando...</div>';
   try{
     const {data,error}=await sb.from('products').select('*').eq('category','zapatillas').order('created_at',{ascending:false});
