@@ -8,6 +8,7 @@
 <link rel="shortcut icon" href="/favicon.png">
 <meta name="description" content="DRACO - Zapatillas &amp; Ropa. Sneakers exclusivos con caja original en Buenos Aires.">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -31,7 +32,7 @@ a{text-decoration:none;color:inherit;}
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);background:rgba(10,10,10,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:16px;}
 .nav-logo{cursor:pointer;display:flex;align-items:center;height:100%;padding:10px 0;flex-shrink:0;}
-.nav-logo img{mix-blend-mode:screen;filter:brightness(1.05);height:30px;width:auto;object-fit:contain;}
+.nav-logo img{height:30px;width:auto;object-fit:contain;filter:drop-shadow(0 0 6px rgba(224,32,32,.25));}
 .nav-links{display:flex;align-items:center;gap:2px;}
 /* Nav link: animated underline pseudo-element approach */
 .nav-link{position:relative;font-size:.58rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--lg);padding:0 12px;height:var(--nav);display:flex;align-items:center;cursor:pointer;transition:color .2s;white-space:nowrap;text-decoration:none;border-bottom:none !important;}
@@ -54,8 +55,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav);backgroun
 .hero-scanline{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);pointer-events:none;}
 /* hero-content: NO z-index — required for mix-blend-mode:screen on logo */
 .hero-content{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;padding:0 20px;}
-/* NO filter on hero-logo — breaks mix-blend-mode:screen */
-.hero-logo{width:100%;max-width:min(92vw,860px);height:auto;object-fit:contain;mix-blend-mode:screen;display:block;margin-bottom:0;}
+/* transparent PNG hero logo — no mix-blend-mode needed */
+.hero-logo{width:100%;max-width:min(92vw,860px);height:auto;object-fit:contain;display:block;margin-bottom:0;filter:drop-shadow(0 0 40px rgba(224,32,32,.45));}
 .hero-rule{width:min(60vw,320px);height:1px;background:linear-gradient(to right,transparent,var(--red),transparent);margin:6px auto 14px;}
 .hero-tagline{font-family:"Bebas Neue",sans-serif;font-size:clamp(1rem,3vw,1.5rem);letter-spacing:.6em;color:rgba(240,237,232,.55);margin-bottom:10px;text-transform:uppercase;}
 .hero-loc{font-size:.58rem;font-weight:300;letter-spacing:.3em;color:var(--g);text-transform:uppercase;margin-bottom:36px;}
@@ -260,7 +261,7 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
 .footer-col{}
 .footer-logo-wrap{display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
 @media(min-width:680px){.footer-logo-wrap{justify-content:flex-start;}}
-.footer-logo-wrap img{height:36px;width:auto;mix-blend-mode:screen;}
+.footer-logo-wrap img{height:36px;width:auto;}
 .footer-tagline{font-size:.5rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--g);line-height:1.8;}
 .footer-col-title{font-size:.48rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--lg);margin-bottom:12px;}
 .footer-social{display:flex;flex-direction:column;gap:10px;align-items:center;}
@@ -573,7 +574,12 @@ footer{border-top:1px solid var(--bd);padding:48px 24px 40px;background:var(--s1
 </div>
 
 <script>
-const ADMIN_USER='admin', ADMIN_PASS='admin', WSP='5491121671135';
+const ADMIN_USER='admin', ADMIN_PASS='draco2025', WSP='5491121671135';
+
+// ── SUPABASE ──
+const _SB_URL  = 'https://qdvpqcabiaympxqbccnr.supabase.co';
+const _SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkdnBxY2FiaWF5bXB4cWJjY25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODE1MzEsImV4cCI6MjA4OTg1NzUzMX0.5-JQ0zgnKfpSTWSF2B3Hmewun6lbfkKFidLaG8E-VvA';
+const sb = window.supabase.createClient(_SB_URL, _SB_KEY);
 
 const SIZES_ZAP=['38','39','40','41','42','43','44','45'];
 const SIZES_ROPA=['XS','S','M','L','XL'];
@@ -605,13 +611,57 @@ const DEFAULT={
   ]
 };
 
-function loadCat(){
-  try{const s=sessionStorage.getItem('draco7');return s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT));}
-  catch(e){return JSON.parse(JSON.stringify(DEFAULT));}
+// ── DB HELPERS ──
+// Convert a JS product object → Supabase row
+function toRow(p, tab) {
+  return {
+    name:        p.name,
+    price:       p.price,
+    category:    tab || p.category || (p.cat==='Ropa'?'ropa':'zapatillas'),
+    cat:         p.cat || (tab==='ropa'?'Ropa':'Zapatillas'),
+    brand:       p.brand  || '',
+    badge:       p.badge  || '',
+    description: p.desc   || p.description || '',
+    tags:        p.tags   || [],
+    sizes:       p.sizes  || [],
+    stock:       Number(p.stock) || 0,
+    images:      (p.images && p.images.length) ? p.images : (p.img ? [p.img] : [])
+  };
 }
-function saveCat(){try{sessionStorage.setItem('draco7',JSON.stringify(cat));}catch(e){}}
+// Convert a Supabase row → JS product (adds .img + .desc for backward compat)
+function fromRow(r) {
+  return {
+    id:          r.id,
+    name:        r.name,
+    price:       r.price,
+    category:    r.category,
+    cat:         r.cat,
+    brand:       r.brand  || '',
+    badge:       r.badge  || '',
+    desc:        r.description || '',
+    description: r.description || '',
+    tags:        r.tags   || [],
+    sizes:       r.sizes  || [],
+    stock:       r.stock  || 0,
+    images:      r.images || [],
+    img:         (r.images && r.images[0]) || ''
+  };
+}
+// Upload base64 image to Supabase Storage → returns public URL (or null on error)
+async function uploadImg(base64, name) {
+  try {
+    const res  = await fetch(base64);
+    const blob = await res.blob();
+    const ext  = blob.type.includes('png') ? 'png' : 'jpg';
+    const path = 'products/' + Date.now() + '_' + (name||'img').replace(/\s+/g,'_') + '.' + ext;
+    const { error } = await sb.storage.from('product-images').upload(path, blob, {contentType: blob.type});
+    if (error) throw error;
+    return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+  } catch(e) { console.warn('Image upload error:', e); return null; }
+}
 
-let cat=loadCat(), nid=100, isAdmin=false, editTarget=null, delTarget=null, pendingImg=null;
+let cat = {zapatillas:[], ropa:[]};
+let nid=100, isAdmin=false, editTarget=null, delTarget=null, pendingImg=null;
 let activeFilters={brand:'todos',size:'todos'};
 let detailQty=1, detailSelectedSize=null;
 
@@ -939,26 +989,42 @@ function handleImg(e){
   r.readAsDataURL(file);
 }
 function removeImg(){pendingImg=null;$('imgDropWrap').style.display='';$('imgPreviewWrap').style.display='none';$('imgPreview').src='';}
-function saveProd(){
+async function saveProd(){
   const tab=$('fCat').value, name=$('fName').value.trim(), price=$('fPrice').value.trim(),
         desc=$('fDesc').value.trim(), badge=$('fBadge').value.trim().toUpperCase(),
         brand=$('fBrand').value.trim(), stock=parseInt($('fStock').value)||0;
   const existImg=editTarget?cat[editTarget.tab][editTarget.idx].img:null;
-  const img=pendingImg||existImg;
-  if(!name||!price||!desc||!img){$('fErr').classList.add('on');return;}
+  let imgURL=pendingImg||existImg;
+  if(!name||!price||!desc||!imgURL){$('fErr').classList.add('on');return;}
   $('fErr').classList.remove('on');
   const sizes=getCheckedSizes();
-  const prod={
-    id:editTarget?cat[editTarget.tab][editTarget.idx].id:nid++,
-    name,price,img,badge,desc,brand,stock,sizes,images:[],
+  // If image is base64, upload to Supabase Storage
+  if(imgURL&&imgURL.startsWith('data:')){
+    const btnSub=document.querySelector('#ovProd .btn-sub');
+    if(btnSub){btnSub.textContent='Subiendo imagen...';btnSub.disabled=true;}
+    const uploaded=await uploadImg(imgURL, name);
+    if(uploaded) imgURL=uploaded;
+    if(btnSub){btnSub.textContent='Guardar producto';btnSub.disabled=false;}
+  }
+  const prod={name,price,badge,desc,brand,stock,sizes,images:[imgURL],img:imgURL,
     tags:name.split(' ').filter(w=>w.length>2).slice(0,3),
-    cat:tab==='zapatillas'?'Zapatillas':'Ropa'
-  };
+    cat:tab==='zapatillas'?'Zapatillas':'Ropa', category:tab};
+  const row=toRow(prod, tab);
+  let saved;
   if(editTarget){
-    if(editTarget.tab!==tab){cat[editTarget.tab].splice(editTarget.idx,1);cat[tab].push(prod);}
-    else{cat[editTarget.tab][editTarget.idx]=prod;}
-  }else{cat[tab].push(prod);}
-  saveCat(); closeModal('ovProd'); renderAdminLists(); renderAll();
+    const existId=cat[editTarget.tab][editTarget.idx].id;
+    const {data,error}=await sb.from('products').update(row).eq('id',existId).select().single();
+    if(error){console.error('Update error:',error);alert('Error al guardar');return;}
+    saved=fromRow(data);
+    if(editTarget.tab!==tab){cat[editTarget.tab].splice(editTarget.idx,1);cat[tab].push(saved);}
+    else{cat[editTarget.tab][editTarget.idx]=saved;}
+  }else{
+    const {data,error}=await sb.from('products').insert(row).select().single();
+    if(error){console.error('Insert error:',error);alert('Error al guardar. Asegurate de haber corrido el SQL en Supabase.');return;}
+    saved=fromRow(data);
+    cat[tab].push(saved);
+  }
+  closeModal('ovProd'); renderAdminLists(); renderAll();
 }
 
 // DELETE
@@ -967,10 +1033,15 @@ function askDel(tab,idx){
   $('delName').textContent='"'+cat[tab][idx].name+'"';
   openModal('ovDel');
 }
-function doDelete(){
+async function doDelete(){
   if(!delTarget)return;
+  const prod=cat[delTarget.tab][delTarget.idx];
+  if(prod.id){
+    const {error}=await sb.from('products').delete().eq('id',prod.id);
+    if(error){console.error('Delete error:',error);}
+  }
   cat[delTarget.tab].splice(delTarget.idx,1);
-  saveCat(); closeModal('ovDel'); delTarget=null;
+  closeModal('ovDel'); delTarget=null;
   renderAdminLists(); renderAll();
 }
 
@@ -983,9 +1054,40 @@ document.querySelectorAll('.modal-bg').forEach(m=>{
 $('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 $('lUser').addEventListener('keydown',e=>{if(e.key==='Enter')$('lPass').focus();});
 
-// INIT
-updateSizeCheckboxes();
-renderAll();
+// ── ASYNC INIT (Supabase) ──
+async function initApp() {
+  updateSizeCheckboxes();
+  // Show loading placeholders
+  ['gridZap','gridRopa','gridFeatured'].forEach(id=>{
+    const el=$(id); if(!el)return;
+    el.innerHTML='<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--g);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;">Cargando catálogo...</div>';
+  });
+  try {
+    const {data, error}=await sb.from('products').select('*').order('created_at',{ascending:false});
+    if(error) throw error;
+    if(!data || data.length===0) {
+      // First run: seed DEFAULT products into Supabase
+      console.log('[DRACO] Seeding default products to Supabase...');
+      const rows=[
+        ...DEFAULT.zapatillas.map(p=>toRow(p,'zapatillas')),
+        ...DEFAULT.ropa.map(p=>toRow(p,'ropa'))
+      ];
+      const {data:seeded, error:seedErr}=await sb.from('products').insert(rows).select();
+      if(seedErr) throw seedErr;
+      cat.zapatillas=seeded.filter(r=>r.category==='zapatillas').map(fromRow);
+      cat.ropa=seeded.filter(r=>r.category==='ropa').map(fromRow);
+    } else {
+      cat.zapatillas=data.filter(r=>r.category==='zapatillas').map(fromRow);
+      cat.ropa=data.filter(r=>r.category==='ropa').map(fromRow);
+    }
+  } catch(e) {
+    console.warn('[DRACO] Supabase unavailable, using local defaults:', e.message);
+    // Fallback: local DEFAULT (works offline / before SQL is run)
+    cat=JSON.parse(JSON.stringify(DEFAULT));
+  }
+  renderAll();
+}
+initApp();
 </script>
 </body>
 </html>
